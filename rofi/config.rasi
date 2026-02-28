@@ -1,0 +1,19 @@
+/* ─────────────────────────────────────────
+   hyprware — rofi/config.rasi
+   catppuccin mocha
+───────────────────────────────────────── */
+
+configuration {
+    modi:            "drun,run,window";
+    show-icons:      true;
+    icon-theme:      "Papirus-Dark";
+    display-drun:    " apps";
+    display-run:     " run";
+    display-window:  " windows";
+    drun-display-format: "{name}";
+    window-format:   "{w} · {c} · {t}";
+    font:            "JetBrainsMono Nerd Font 12";
+    terminal:        "kitty";
+}
+
+@import "theme.rasi"
