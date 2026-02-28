@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hyprware</title>
+<link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0d0f14;
+    --surface:  #13151c;
+    --overlay:  #1a1d27;
+    --border:   rgba(255,255,255,0.07);
+    --text:     #e2e4ef;
+    --muted:    #6b7094;
+    --green:    #a6e3a1;
+    --teal:     #94e2d5;
+    --blue:     #89b4fa;
+    --lavender: #b4befe;
+    --mauve:    #cba6f7;
+    --red:      #f38ba8;
+    --yellow:   #f9e2af;
+    --peach:    #fab387;
+    --glow-b:   rgba(137,180,250,0.15);
+    --glow-m:   rgba(203,166,247,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    background: rgba(13,15,20,0.6);
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--blue);
+    text-shadow: 0 0 20px rgba(137,180,250,0.5);
+  }
+
+  .logo span { color: var(--mauve); }
+
+  nav { display: flex; gap: 1.8rem; }
+  nav a {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--lavender); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 4rem 2rem;
+  }
+
+  /* animated gradient orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    animation: drift 12s ease-in-out infinite alternate;
+  }
+  .orb1 { width:500px; height:500px; background: radial-gradient(circle, var(--mauve), transparent 70%); top: -150px; left: -100px; animation-delay: 0s; }
+  .orb2 { width:400px; height:400px; background: radial-gradient(circle, var(--blue), transparent 70%); bottom: -100px; right: -80px; animation-delay: -4s; }
+  .orb3 { width:300px; height:300px; background: radial-gradient(circle, var(--teal), transparent 70%); top: 50%; left: 55%; animation-delay: -8s; }
+
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(40px, 30px) scale(1.1); }
+  }
+
+  .hero-content { position: relative; z-index: 1; text-align: center; }
+
+  .hero-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mauve);
+    border: 1px solid rgba(203,166,247,0.3);
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 2rem;
+    background: rgba(203,166,247,0.06);
+    animation: fadeUp 0.6s ease both;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 10vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  h1 .line1 { display: block; color: var(--text); }
+  h1 .line2 { display: block; color: var(--blue); text-shadow: 0 0 40px rgba(137,180,250,0.4); }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-tags {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .tag-g { color: var(--green); border-color: rgba(166,227,161,0.25); background: rgba(166,227,161,0.05); }
+  .tag-t { color: var(--teal); border-color: rgba(148,226,213,0.25); background: rgba(148,226,213,0.05); }
+  .tag-m { color: var(--mauve); border-color: rgba(203,166,247,0.25); background: rgba(203,166,247,0.05); }
+  .tag-b { color: var(--blue); border-color: rgba(137,180,250,0.25); background: rgba(137,180,250,0.05); }
+  .tag-y { color: var(--yellow); border-color: rgba(249,226,175,0.25); background: rgba(249,226,175,0.05); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── DESKTOP MOCKUP ── */
+  .mockup-section {
+    padding: 4rem 2rem 6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::before, .section-label::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: var(--border);
+    width: 60px;
+  }
+
+  .desktop {
+    width: 100%;
+    max-width: 900px;
+    background: #060709;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03),
+      0 40px 100px rgba(0,0,0,0.7),
+      0 0 60px rgba(137,180,250,0.06);
+    position: relative;
+  }
+
+  /* wallpaper */
+  .wallpaper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+    background: #060709;
+    overflow: hidden;
+  }
+
+  .wallpaper-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 30% 40%, rgba(137,180,250,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 75% 60%, rgba(203,166,247,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 80%, rgba(148,226,213,0.05) 0%, transparent 70%),
+      linear-gradient(135deg, #060709 0%, #0d0f18 50%, #07090e 100%);
+  }
+
+  /* mountain silhouettes */
+  .mountains {
+    position: absolute;
+    bottom: 60px;
+    left: 0; right: 0;
+  }
+
+  /* grid lines */
+  .grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(137,180,250,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(137,180,250,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* stars */
+  .stars {
+    position: absolute; inset: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+
+  /* ── WAYBAR ── */
+  .waybar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    background: rgba(13,15,20,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    z-index: 10;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .wb-left { display: flex; align-items: center; gap: 8px; }
+  .wb-center { display: flex; align-items: center; gap: 4px; }
+  .wb-right { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+
+  .ws-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .ws-dot:hover { transform: scale(1.4); }
+  .ws-active { background: var(--blue); box-shadow: 0 0 6px rgba(137,180,250,0.6); }
+  .ws-used { background: var(--muted); }
+  .ws-empty { background: rgba(255,255,255,0.12); }
+
+  .wb-title { color: var(--muted); font-size: 9px; }
+  .wb-clock { color: var(--text); font-weight: 700; }
+  .wb-icon { font-size: 11px; }
+
+  .wb-module {
+    display: flex; align-items: center; gap: 4px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .wb-module .icon { font-size: 9px; }
+
+  /* ── FLOATING WINDOWS ── */
+  .window {
+    position: absolute;
+    background: rgba(13,15,20,0.88);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(255,255,255,0.02),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    overflow: hidden;
+    animation: windowFloat 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes windowFloat {
+    from { transform: translateY(0px); }
+    to   { transform: translateY(-5px); }
+  }
+
+  .win-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .win-btn { width: 8px; height: 8px; border-radius: 50%; }
+  .btn-r { background: #f38ba8; }
+  .btn-y { background: #f9e2af; }
+  .btn-g { background: #a6e3a1; }
+  .win-title { font-size: 8px; letter-spacing: 0.1em; color: var(--muted); margin-left: 4px; }
+
+  /* terminal window */
+  .term-win {
+    width: 320px;
+    left: 30px;
+    top: 50px;
+    animation-delay: 0s;
+  }
+  .term-body {
+    padding: 10px 12px;
+    font-size: 9px;
+    line-height: 1.7;
+    font-family: 'Space Mono', monospace;
+  }
+  .term-prompt { color: var(--green); }
+  .term-cmd { color: var(--text); }
+  .term-out { color: var(--muted); }
+  .term-cursor {
+    display: inline-block;
+    width: 6px; height: 11px;
+    background: var(--blue);
+    vertical-align: middle;
+    animation: blink 1.2s step-end infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* neofetch window */
+  .neo-win {
+    width: 260px;
+    right: 40px;
+    top: 45px;
+    animation-delay: -2s;
+  }
+  .neo-body { padding: 10px 12px; font-size: 8.5px; line-height: 1.8; }
+  .neo-ascii { color: var(--blue); font-size: 8px; line-height: 1.4; margin-bottom: 6px; }
+  .neo-key { color: var(--mauve); }
+  .neo-val { color: var(--text); }
+  .neo-sep { color: var(--muted); }
+  .neo-colors { display: flex; gap: 3px; margin-top: 6px; }
+  .nc { width: 13px; height: 13px; border-radius: 2px; }
+
+  /* music window */
+  .music-win {
+    width: 190px;
+    bottom: 70px;
+    right: 55px;
+    animation-delay: -4s;
+  }
+  .music-body { padding: 10px 12px; }
+  .music-art {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background:
+      linear-gradient(135deg, rgba(137,180,250,0.3), rgba(203,166,247,0.3)),
+      repeating-conic-gradient(rgba(255,255,255,0.03) 0% 25%, transparent 0% 50%) 0 0 / 20px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    overflow: hidden;
+    position: relative;
+  }
+  .vinyl {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center, #1a1d27 25%, transparent 25%),
+      conic-gradient(from 0deg, var(--blue) 0%, var(--mauve) 40%, var(--teal) 70%, var(--blue) 100%);
+    animation: spin 6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .music-title { font-size: 9px; font-weight: 700; color: var(--text); }
+  .music-artist { font-size: 8px; color: var(--muted); margin-top: 2px; }
+  .music-bar {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 8px;
+  }
+  .music-progress {
+    flex: 1; height: 2px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .music-fill {
+    height: 100%; width: 42%;
+    background: linear-gradient(90deg, var(--blue), var(--mauve));
+    border-radius: 999px;
+  }
+  .music-time { font-size: 7px; color: var(--muted); }
+
+  /* rofi launcher */
+  .rofi-win {
+    width: 240px;
+    left: 50%;
+    bottom: 60px;
+    transform: translateX(-50%);
+    animation: windowFloat 6s ease-in-out infinite alternate;
+    animation-delay: -1s;
+  }
+  .rofi-body { padding: 8px; }
+  .rofi-input {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(137,180,250,0.2);
+    border-radius: 6px;
+    padding: 5px 8px;
+    margin-bottom: 6px;
+  }
+  .rofi-icon { color: var(--blue); font-size: 10px; }
+  .rofi-text { font-size: 9px; color: var(--text); flex: 1; }
+  .rofi-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 8.5px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .rofi-item.active {
+    background: rgba(137,180,250,0.1);
+    border: 1px solid rgba(137,180,250,0.15);
+    color: var(--text);
+  }
+  .rofi-item-icon { font-size: 11px; }
+
+  /* ── CONFIGS SECTION ── */
+  .configs {
+    padding: 4rem 2rem 6rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .configs h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.5rem;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+  .configs h2 span { color: var(--blue); }
+
+  .configs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .cfg-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .cfg-card:hover {
+    border-color: rgba(137,180,250,0.25);
+    transform: translateY(-2px);
+  }
+
+  .cfg-header {
+    padding: 0.75rem 1rem;
+    display: flex; align-items: center; gap: 0.6rem;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+  .cfg-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .cfg-filename { font-size: 0.7rem; letter-spacing: 0.08em; color: var(--muted); }
+
+  pre {
+    padding: 1rem;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .c-comment { color: #6b7094; }
+  .c-key { color: var(--blue); }
+  .c-val { color: var(--green); }
+  .c-str { color: var(--yellow); }
+  .c-num { color: var(--peach); }
+  .c-section { color: var(--mauve); font-weight: 700; }
+  .c-bool-t { color: var(--teal); }
+  .c-bool-f { color: var(--red); }
+
+  /* ── COLOR PALETTE ── */
+  .palette-section {
+    padding: 2rem 2rem 5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  .swatch {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .swatch:hover {
+    transform: scale(1.08) translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .swatch::after {
+    content: attr(data-name);
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.6);
+    font-size: 7px;
+    letter-spacing: 0.05em;
+    text-align: center;
+    padding: 3px 0;
+    transform: translateY(100%);
+    transition: transform 0.2s;
+    color: white;
+  }
+  .swatch:hover::after { transform: translateY(0); }
+
+  /* ── KEYBINDS ── */
+  .keybinds {
+    padding: 2rem 2rem 6rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .keys-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.6rem;
+    margin-top: 2rem;
+  }
+
+  .key-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.9rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color 0.2s;
+  }
+  .key-item:hover { border-color: rgba(203,166,247,0.3); }
+
+  .key-desc { font-size: 0.72rem; color: var(--muted); }
+
+  .key-combo { display: flex; align-items: center; gap: 3px; }
+  kbd {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    padding: 2px 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    color: var(--lavender);
+    white-space: nowrap;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+  footer a { color: var(--blue); text-decoration: none; }
+  footer a:hover { color: var(--lavender); }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 2rem;
+  }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+  .scroll-arrow {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--muted), transparent);
+    animation: scrollDrop 2s ease-in-out infinite;
+  }
+  @keyframes scrollDrop {
+    from { transform: scaleY(0); transform-origin: top; }
+    50%  { transform: scaleY(1); transform-origin: top; }
+    51%  { transform: scaleY(1); transform-origin: bottom; }
+    to   { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ── INSTALL SECTION ── */
+  .install {
+    padding: 2rem 2rem 6rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .install h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.5rem;
+    letter-spacing: -0.03em;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .install-subtitle {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-bottom: 2rem;
+  }
+
+  .install-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .install-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .install-step:hover {
+    border-color: rgba(166,227,161,0.25);
+    transform: translateY(-2px);
+  }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: rgba(166,227,161,0.15);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.35rem;
+  }
+
+  .step-desc {
+    font-size: 0.68rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .script-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+
+  .script-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.2rem;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .script-header-left {
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+
+  .script-filename {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .copy-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--green);
+    background: rgba(166,227,161,0.08);
+    border: 1px solid rgba(166,227,161,0.2);
+    border-radius: 4px;
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .copy-btn:hover {
+    background: rgba(166,227,161,0.15);
+    color: #fff;
+  }
+  .copy-btn.copied {
+    color: var(--teal);
+    border-color: rgba(148,226,213,0.3);
+    background: rgba(148,226,213,0.08);
+  }
+
+  .script-body {
+    padding: 1.2rem 1.4rem;
+    font-size: 0.72rem;
+    line-height: 1.9;
+    overflow-x: auto;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .sh-comment  { color: #6b7094; }
+  .sh-cmd      { color: var(--blue); }
+  .sh-str      { color: var(--yellow); }
+  .sh-flag     { color: var(--peach); }
+  .sh-var      { color: var(--mauve); }
+  .sh-fn       { color: var(--green); font-weight: 700; }
+  .sh-ok       { color: var(--teal); }
+  .sh-section  { color: var(--green); font-weight: 700; display: block; margin-top: 0.6rem; }
+
+  .install-cmd {
+    margin-top: 2rem;
+    background: var(--surface);
+    border: 1px solid rgba(137,180,250,0.2);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .install-cmd code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--blue);
+    flex: 1;
+  }
+
+  .install-cmd code span { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">hypr<span>ware</span></div>
+  <nav>
+    <a href="#preview">preview</a>
+    <a href="#configs">configs</a>
+    <a href="#palette">palette</a>
+    <a href="#keybinds">keybinds</a>
+    <a href="#install">install</a>
+  </nav>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">✦ hyprware ✦</div>
+    <p class="hero-sub">a dark catppuccin mocha rice with glassy windows &amp; soft neons</p>
+    <div class="hero-tags">
+      <span class="tag tag-b">Hyprland</span>
+      <span class="tag tag-m">Waybar</span>
+      <span class="tag tag-t">Kitty</span>
+      <span class="tag tag-g">Rofi</span>
+      <span class="tag tag-y">Catppuccin Mocha</span>
+      <span class="tag tag-b">Blur + Gaps</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    scroll
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ── DESKTOP PREVIEW ── -->
+<section class="mockup-section" id="preview">
+  <div class="section-label">desktop preview</div>
+
+  <div class="desktop">
+    <div class="wallpaper">
+      <div class="wallpaper-bg"></div>
+      <div class="grid-lines"></div>
+      <div class="stars" id="stars"></div>
+
+      <!-- SVG mountain silhouettes -->
+      <svg class="mountains" viewBox="0 0 900 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <polygon points="0,120 120,30 240,80 360,10 480,60 600,20 720,55 840,15 900,45 900,120" fill="rgba(137,180,250,0.04)" />
+        <polygon points="0,120 80,60 180,90 300,40 420,75 540,35 660,65 780,30 900,50 900,120" fill="rgba(203,166,247,0.04)" />
+        <polygon points="0,120 60,85 150,100 270,65 390,90 510,55 630,80 750,60 870,75 900,70 900,120" fill="rgba(255,255,255,0.02)" />
+      </svg>
+
+      <!-- Waybar -->
+      <div class="waybar">
+        <div class="wb-left">
+          <div class="wb-module">
+            <span class="ws-dot ws-active"></span>
+            <span class="ws-dot ws-used"></span>
+            <span class="ws-dot ws-used"></span>
+            <span class="ws-dot ws-empty"></span>
+            <span class="ws-dot ws-empty"></span>
+          </div>
+          <span class="wb-title">kitty — ~</span>
+        </div>
+        <div class="wb-center">
+          <div class="wb-clock">23:47</div>
+        </div>
+        <div class="wb-right">
+          <div class="wb-module"><span class="icon">󰕾</span> 65%</div>
+          <div class="wb-module"><span class="icon">󰤨</span> wifi</div>
+          <div class="wb-module"><span class="icon">󰂄</span> 94%</div>
+        </div>
+      </div>
+
+      <!-- Terminal Window -->
+      <div class="window term-win">
+        <div class="win-titlebar">
+          <div class="win-btn btn-r"></div>
+          <div class="win-btn btn-y"></div>
+          <div class="win-btn btn-g"></div>
+          <span class="win-title">kitty — ~/projects/void</span>
+        </div>
+        <div class="term-body">
+          <div><span class="term-prompt">❯ </span><span class="term-cmd">neofetch</span></div>
+          <div class="term-out">&nbsp;</div>
+          <div><span class="term-prompt">❯ </span><span class="term-cmd">hyprctl version</span></div>
+          <div class="term-out">Hyprland v0.41.0</div>
+          <div class="term-out">built from v0.41.0 at ...</div>
+          <div>&nbsp;</div>
+          <div><span class="term-prompt">❯ </span><span class="term-cursor"></span></div>
+        </div>
+      </div>
+
+      <!-- Neofetch Window -->
+      <div class="window neo-win">
+        <div class="win-titlebar">
+          <div class="win-btn btn-r"></div>
+          <div class="win-btn btn-y"></div>
+          <div class="win-btn btn-g"></div>
+          <span class="win-title">neofetch</span>
+        </div>
+        <div class="neo-body">
+          <div class="neo-ascii">
+   /\         /\<br>
+  /  \__  __/  \<br>
+ / /\ \|  |/ /\ \<br>
+/__\  `\__/`  /__\<br>
+   `-._    _.-`<br>
+       `--`
+          </div>
+          <div><span class="neo-key">user</span><span class="neo-sep">@</span><span class="neo-val">void</span></div>
+          <div><span class="neo-key">os</span>&nbsp;&nbsp;<span class="neo-sep">~</span> <span class="neo-val">skywareOS x86_64</span></div>
+          <div><span class="neo-key">wm</span>&nbsp;&nbsp;<span class="neo-sep">~</span> <span class="neo-val">Hyprland</span></div>
+          <div><span class="neo-key">term</span><span class="neo-sep">~</span> <span class="neo-val">kitty</span></div>
+          <div><span class="neo-key">sh</span>&nbsp;&nbsp;<span class="neo-sep">~</span> <span class="neo-val">zsh</span></div>
+          <div><span class="neo-key">bar</span>&nbsp;&nbsp;<span class="neo-sep">~</span> <span class="neo-val">waybar</span></div>
+          <div class="neo-colors">
+            <div class="nc" style="background:#45475a"></div>
+            <div class="nc" style="background:#f38ba8"></div>
+            <div class="nc" style="background:#a6e3a1"></div>
+            <div class="nc" style="background:#f9e2af"></div>
+            <div class="nc" style="background:#89b4fa"></div>
+            <div class="nc" style="background:#cba6f7"></div>
+            <div class="nc" style="background:#94e2d5"></div>
+            <div class="nc" style="background:#cdd6f4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Music Window -->
+      <div class="window music-win">
+        <div class="win-titlebar">
+          <div class="win-btn btn-r"></div>
+          <div class="win-btn btn-y"></div>
+          <div class="win-btn btn-g"></div>
+          <span class="win-title">cmus</span>
+        </div>
+        <div class="music-body">
+          <div class="music-art">
+            <div class="vinyl"></div>
+          </div>
+          <div class="music-title">Midnight City</div>
+          <div class="music-artist">M83</div>
+          <div class="music-bar">
+            <span class="music-time">1:32</span>
+            <div class="music-progress"><div class="music-fill"></div></div>
+            <span class="music-time">4:03</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rofi Window -->
+      <div class="window rofi-win">
+        <div class="win-titlebar">
+          <div class="win-btn btn-r"></div>
+          <div class="win-btn btn-y"></div>
+          <div class="win-btn btn-g"></div>
+          <span class="win-title">rofi — launcher</span>
+        </div>
+        <div class="rofi-body">
+          <div class="rofi-input">
+            <span class="rofi-icon">⌕</span>
+            <span class="rofi-text">browse_</span>
+          </div>
+          <div class="rofi-item active"><span class="rofi-item-icon">󰇧</span> Firefox</div>
+          <div class="rofi-item"><span class="rofi-item-icon"></span> kitty</div>
+          <div class="rofi-item"><span class="rofi-item-icon">󰿃</span> Neovim</div>
+          <div class="rofi-item"><span class="rofi-item-icon">󱎓</span> Spotify</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONFIGS ── -->
+<section class="configs" id="configs">
+  <div class="section-label">config files</div>
+  <h2 style="margin-top:1rem">the dotfiles <span>explained</span></h2>
+
+  <div class="configs-grid">
+
+    <!-- hyprland.conf -->
+    <div class="cfg-card">
+      <div class="cfg-header">
+        <div class="cfg-dot" style="background:var(--blue)"></div>
+        <span class="cfg-filename">~/.config/hypr/hyprland.conf</span>
+      </div>
+      <pre><span class="c-section">general</span> {
+  <span class="c-key">gaps_in</span>          = <span class="c-num">4</span>
+  <span class="c-key">gaps_out</span>         = <span class="c-num">10</span>
+  <span class="c-key">border_size</span>      = <span class="c-num">2</span>
+  <span class="c-key">col.active_border</span>= <span class="c-str">rgba(89b4facc)</span>
+                     <span class="c-str">rgba(cba6f7cc)</span> <span class="c-num">45deg</span>
+  <span class="c-key">col.inactive_border</span> = <span class="c-str">rgba(1e1e2eaa)</span>
+  <span class="c-key">layout</span>           = <span class="c-str">dwindle</span>
+}
+
+<span class="c-section">decoration</span> {
+  <span class="c-key">rounding</span>         = <span class="c-num">10</span>
+  <span class="c-key">blur</span> {
+    <span class="c-key">enabled</span>        = <span class="c-bool-t">true</span>
+    <span class="c-key">size</span>           = <span class="c-num">8</span>
+    <span class="c-key">passes</span>         = <span class="c-num">3</span>
+    <span class="c-key">new_optimizations</span> = <span class="c-bool-t">true</span>
+  }
+  <span class="c-key">drop_shadow</span>      = <span class="c-bool-t">true</span>
+  <span class="c-key">shadow_range</span>     = <span class="c-num">20</span>
+  <span class="c-key">shadow_color</span>     = <span class="c-str">rgba(1a1a2eee)</span>
+}</pre>
+    </div>
+
+    <!-- animations -->
+    <div class="cfg-card">
+      <div class="cfg-header">
+        <div class="cfg-dot" style="background:var(--mauve)"></div>
+        <span class="cfg-filename">hyprland.conf — animations</span>
+      </div>
+      <pre><span class="c-section">animations</span> {
+  <span class="c-key">enabled</span>          = <span class="c-bool-t">yes</span>
+
+  <span class="c-comment"># bezier curves</span>
+  <span class="c-key">bezier</span> = <span class="c-str">myBezier</span>, <span class="c-num">0.05</span>, <span class="c-num">0.9</span>, <span class="c-num">0.1</span>, <span class="c-num">1.05</span>
+  <span class="c-key">bezier</span> = <span class="c-str">linear</span>, <span class="c-num">0.0</span>, <span class="c-num">0.0</span>, <span class="c-num">1.0</span>, <span class="c-num">1.0</span>
+  <span class="c-key">bezier</span> = <span class="c-str">overshot</span>, <span class="c-num">0.13</span>, <span class="c-num">0.99</span>, <span class="c-num">0.29</span>, <span class="c-num">1.1</span>
+
+  <span class="c-comment"># animations</span>
+  <span class="c-key">animation</span> = <span class="c-str">windows</span>, <span class="c-num">1</span>, <span class="c-num">7</span>, <span class="c-str">myBezier</span>
+  <span class="c-key">animation</span> = <span class="c-str">windowsOut</span>, <span class="c-num">1</span>, <span class="c-num">7</span>, default,
+              <span class="c-str">popin 80%</span>
+  <span class="c-key">animation</span> = <span class="c-str">border</span>, <span class="c-num">1</span>, <span class="c-num">10</span>, <span class="c-str">default</span>
+  <span class="c-key">animation</span> = <span class="c-str">borderangle</span>, <span class="c-num">1</span>, <span class="c-num">8</span>, <span class="c-str">linear</span>, <span class="c-str">loop</span>
+  <span class="c-key">animation</span> = <span class="c-str">fade</span>, <span class="c-num">1</span>, <span class="c-num">7</span>, <span class="c-str">default</span>
+  <span class="c-key">animation</span> = <span class="c-str">workspaces</span>, <span class="c-num">1</span>, <span class="c-num">6</span>, <span class="c-str">overshot</span>,
+              <span class="c-str">slide</span>
+}</pre>
+    </div>
+
+    <!-- waybar style -->
+    <div class="cfg-card">
+      <div class="cfg-header">
+        <div class="cfg-dot" style="background:var(--teal)"></div>
+        <span class="cfg-filename">~/.config/waybar/style.css</span>
+      </div>
+      <pre><span class="c-key">* </span>{
+  <span class="c-key">font-family</span>: <span class="c-str">"Space Mono"</span>, monospace;
+  <span class="c-key">font-size</span>: <span class="c-num">12px</span>;
+  <span class="c-key">border</span>: none;
+  <span class="c-key">border-radius</span>: <span class="c-num">0</span>;
+}
+
+<span class="c-key">window#waybar </span>{
+  <span class="c-key">background</span>: <span class="c-str">rgba(30,30,46,0.8)</span>;
+  <span class="c-key">backdrop-filter</span>: <span class="c-str">blur(20px)</span>;
+  <span class="c-key">color</span>: <span class="c-str">#cdd6f4</span>;
+  <span class="c-key">border-bottom</span>: <span class="c-num">1px</span> solid
+    <span class="c-str">rgba(137,180,250,0.1)</span>;
+}
+
+<span class="c-key">#workspaces button.active </span>{
+  <span class="c-key">background</span>: <span class="c-str">rgba(137,180,250,0.15)</span>;
+  <span class="c-key">color</span>: <span class="c-str">#89b4fa</span>;
+  <span class="c-key">box-shadow</span>: inset <span class="c-num">0 -3px 0</span>
+    <span class="c-str">#89b4fa</span>;
+}</pre>
+    </div>
+
+    <!-- kitty.conf -->
+    <div class="cfg-card">
+      <div class="cfg-header">
+        <div class="cfg-dot" style="background:var(--green)"></div>
+        <span class="cfg-filename">~/.config/kitty/kitty.conf</span>
+      </div>
+      <pre><span class="c-comment"># fonts</span>
+<span class="c-key">font_family</span>       <span class="c-val">JetBrains Mono</span>
+<span class="c-key">bold_font</span>         <span class="c-val">auto</span>
+<span class="c-key">font_size</span>         <span class="c-num">13.0</span>
+
+<span class="c-comment"># transparency</span>
+<span class="c-key">background_opacity</span> <span class="c-num">0.85</span>
+<span class="c-key">background_blur</span>   <span class="c-num">32</span>
+
+<span class="c-comment"># catppuccin mocha colors</span>
+<span class="c-key">foreground</span>  <span class="c-str">#CDD6F4</span>
+<span class="c-key">background</span>  <span class="c-str">#1E1E2E</span>
+<span class="c-key">color0</span>      <span class="c-str">#45475A</span>
+<span class="c-key">color1</span>      <span class="c-str">#F38BA8</span>
+<span class="c-key">color2</span>      <span class="c-str">#A6E3A1</span>
+<span class="c-key">color3</span>      <span class="c-str">#F9E2AF</span>
+<span class="c-key">color4</span>      <span class="c-str">#89B4FA</span>
+<span class="c-key">color5</span>      <span class="c-str">#CBA6F7</span>
+<span class="c-key">color6</span>      <span class="c-str">#94E2D5</span></pre>
+    </div>
+
+    <!-- rofi style -->
+    <div class="cfg-card">
+      <div class="cfg-header">
+        <div class="cfg-dot" style="background:var(--peach)"></div>
+        <span class="cfg-filename">~/.config/rofi/config.rasi</span>
+      </div>
+      <pre><span class="c-key">* </span>{
+  <span class="c-key">bg-col</span>:  <span class="c-str">rgba(30, 30, 46, 85%)</span>;
+  <span class="c-key">bg-col-light</span>: <span class="c-str">rgba(49, 50, 68, 85%)</span>;
+  <span class="c-key">border-col</span>: <span class="c-str">rgba(137,180,250, 30%)</span>;
+  <span class="c-key">selected-col</span>: <span class="c-str">#89b4fa</span>;
+  <span class="c-key">blue</span>: <span class="c-str">#89b4fa</span>;
+  <span class="c-key">font</span>: <span class="c-str">"Space Mono 12"</span>;
+}
+
+<span class="c-key">element selected </span>{
+  <span class="c-key">background-color</span>:
+    <span class="c-str">rgba(137,180,250,0.12)</span>;
+  <span class="c-key">border</span>: <span class="c-num">1px</span> solid
+    <span class="c-str">rgba(137,180,250,0.25)</span>;
+  <span class="c-key">border-radius</span>: <span class="c-num">6px</span>;
+}</pre>
+    </div>
+
+    <!-- dwindle layout -->
+    <div class="cfg-card">
+      <div class="cfg-header">
+        <div class="cfg-dot" style="background:var(--lavender)"></div>
+        <span class="cfg-filename">hyprland.conf — layout</span>
+      </div>
+      <pre><span class="c-section">dwindle</span> {
+  <span class="c-key">pseudotile</span>       = <span class="c-bool-t">yes</span>
+  <span class="c-key">preserve_split</span>   = <span class="c-bool-t">yes</span>
+  <span class="c-key">smart_split</span>      = <span class="c-bool-f">no</span>
+}
+
+<span class="c-section">master</span> {
+  <span class="c-key">new_is_master</span>    = <span class="c-bool-t">true</span>
+}
+
+<span class="c-section">misc</span> {
+  <span class="c-key">force_default_wallpaper</span> = <span class="c-num">0</span>
+  <span class="c-key">disable_hyprland_logo</span>   = <span class="c-bool-t">true</span>
+  <span class="c-key">vrr</span>                     = <span class="c-num">0</span>
+}
+
+<span class="c-comment"># window rules</span>
+<span class="c-key">windowrulev2</span> = <span class="c-str">opacity 0.9 0.85</span>,
+  class:<span class="c-str">^(kitty)$</span>
+<span class="c-key">windowrulev2</span> = <span class="c-str">float</span>,
+  class:<span class="c-str">^(rofi)$</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ── COLOR PALETTE ── -->
+<section class="palette-section" id="palette">
+  <div class="section-label">color palette</div>
+  <h2 style="font-family:'Syne',sans-serif; font-weight:800; font-size:2.5rem; letter-spacing:-0.03em; margin-top:1rem;">catppuccin <span style="color:var(--mauve)">mocha</span></h2>
+
+  <div class="palette-grid">
+    <div class="swatch" style="background:#1e1e2e" data-name="base"></div>
+    <div class="swatch" style="background:#181825" data-name="mantle"></div>
+    <div class="swatch" style="background:#313244" data-name="surface0"></div>
+    <div class="swatch" style="background:#45475a" data-name="surface1"></div>
+    <div class="swatch" style="background:#585b70" data-name="surface2"></div>
+    <div class="swatch" style="background:#cdd6f4" data-name="text"></div>
+    <div class="swatch" style="background:#bac2de" data-name="subtext1"></div>
+    <div class="swatch" style="background:#a6adc8" data-name="subtext0"></div>
+    <div class="swatch" style="background:#f38ba8" data-name="red"></div>
+    <div class="swatch" style="background:#fab387" data-name="peach"></div>
+    <div class="swatch" style="background:#f9e2af" data-name="yellow"></div>
+    <div class="swatch" style="background:#a6e3a1" data-name="green"></div>
+    <div class="swatch" style="background:#94e2d5" data-name="teal"></div>
+    <div class="swatch" style="background:#89b4fa" data-name="blue"></div>
+    <div class="swatch" style="background:#b4befe" data-name="lavender"></div>
+    <div class="swatch" style="background:#cba6f7" data-name="mauve"></div>
+  </div>
+</section>
+
+<!-- ── KEYBINDS ── -->
+<section class="keybinds" id="keybinds">
+  <div class="section-label">keybindings</div>
+  <h2 style="font-family:'Syne',sans-serif; font-weight:800; font-size:2.5rem; letter-spacing:-0.03em; margin-top:1rem;">quick <span style="color:var(--green)">keys</span></h2>
+
+  <div class="keys-grid">
+    <div class="key-item"><span class="key-desc">open terminal</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>return</kbd></span></div>
+    <div class="key-item"><span class="key-desc">launcher</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>space</kbd></span></div>
+    <div class="key-item"><span class="key-desc">kill window</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>Q</kbd></span></div>
+    <div class="key-item"><span class="key-desc">file manager</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>E</kbd></span></div>
+    <div class="key-item"><span class="key-desc">screenshot</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>S</kbd></span></div>
+    <div class="key-item"><span class="key-desc">fullscreen</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>F</kbd></span></div>
+    <div class="key-item"><span class="key-desc">float toggle</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>V</kbd></span></div>
+    <div class="key-item"><span class="key-desc">focus left</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>H</kbd></span></div>
+    <div class="key-item"><span class="key-desc">focus right</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>L</kbd></span></div>
+    <div class="key-item"><span class="key-desc">focus up</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>K</kbd></span></div>
+    <div class="key-item"><span class="key-desc">focus down</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>J</kbd></span></div>
+    <div class="key-item"><span class="key-desc">ws 1–9</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>1–9</kbd></span></div>
+    <div class="key-item"><span class="key-desc">move to ws</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>1–9</kbd></span></div>
+    <div class="key-item"><span class="key-desc">reload config</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>CTRL</kbd>+<kbd>R</kbd></span></div>
+    <div class="key-item"><span class="key-desc">exit hyprland</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>E</kbd></span></div>
+    <div class="key-item"><span class="key-desc">resize mode</span><span class="key-combo"><kbd>SUPER</kbd>+<kbd>R</kbd></span></div>
+  </div>
+</section>
+
+<!-- ── INSTALL ── -->
+<section class="install" id="install">
+  <div class="section-label">get it running</div>
+  <h2>one-line <span style="color:var(--green)">install</span></h2>
+  <p class="install-subtitle">run the script on a fresh skywareOS install — it handles everything</p>
+
+  <div class="install-steps">
+    <div class="install-step">
+      <div class="step-num">01</div>
+      <div class="step-title">dependencies</div>
+      <div class="step-desc">installs hyprland, waybar, kitty, rofi, swww, dunst, and all required fonts via the package manager</div>
+    </div>
+    <div class="install-step">
+      <div class="step-num">02</div>
+      <div class="step-title">dotfiles</div>
+      <div class="step-desc">backs up your existing configs, then drops hyprware configs into ~/.config for each app</div>
+    </div>
+    <div class="install-step">
+      <div class="step-num">03</div>
+      <div class="step-title">theme</div>
+      <div class="step-desc">applies catppuccin mocha to gtk, sets the wallpaper, and installs the cursor theme</div>
+    </div>
+    <div class="install-step">
+      <div class="step-num">04</div>
+      <div class="step-title">done</div>
+      <div class="step-desc">log out and select hyprland from your display manager — your desktop awaits</div>
+    </div>
+  </div>
+
+  <div class="script-card">
+    <div class="script-header">
+      <div class="script-header-left">
+        <div class="cfg-dot" style="background:var(--green)"></div>
+        <span class="script-filename">install.sh</span>
+      </div>
+      <button class="copy-btn" id="copyBtn" onclick="copyScript()">copy</button>
+    </div>
+    <div class="script-body" id="scriptContent">
+<span class="sh-comment">#!/usr/bin/env bash</span>
+<span class="sh-comment"># ─────────────────────────────────────────</span>
+<span class="sh-comment">#  hyprware install script</span>
+<span class="sh-comment">#  target: skywareOS</span>
+<span class="sh-comment"># ─────────────────────────────────────────</span>
+
+<span class="sh-fn">set</span> <span class="sh-flag">-e</span>
+
+<span class="sh-var">DOTFILES_DIR</span>=<span class="sh-str">"$HOME/.config"</span>
+<span class="sh-var">BACKUP_DIR</span>=<span class="sh-str">"$HOME/.config.bak.$(date +%s)"</span>
+<span class="sh-var">REPO</span>=<span class="sh-str">"https://github.com/SkywareSW/hyprware"</span>
+
+<span class="sh-fn">log</span>() { <span class="sh-cmd">echo</span> <span class="sh-str">-e "\033[1;34m[hyprware]\033[0m $1"</span>; }
+<span class="sh-fn">ok</span>()  { <span class="sh-cmd">echo</span> <span class="sh-str">-e "\033[1;32m[  done  ]\033[0m $1"</span>; }
+<span class="sh-fn">err</span>() { <span class="sh-cmd">echo</span> <span class="sh-str">-e "\033[1;31m[  err   ]\033[0m $1"</span> <span class="sh-flag">&amp;&amp; exit 1</span>; }
+
+<span class="sh-section"># ── 01 check os ──────────────────────────</span>
+<span class="sh-cmd">log</span> <span class="sh-str">"checking system..."</span>
+[[ <span class="sh-str">"$(uname -s)"</span> == <span class="sh-str">"Linux"</span> ]] || <span class="sh-fn">err</span> <span class="sh-str">"linux only"</span>
+<span class="sh-cmd">ok</span> <span class="sh-str">"running on skywareOS"</span>
+
+<span class="sh-section"># ── 02 install packages ──────────────────</span>
+<span class="sh-var">PKGS</span>=(
+  hyprland waybar kitty rofi-wayland
+  swww dunst polkit-gnome
+  noto-fonts nerd-fonts-jetbrains-mono
+  catppuccin-gtk-theme-mocha
+  hyprpicker grim slurp wl-clipboard
+  btop neofetch zsh starship
+)
+
+<span class="sh-cmd">log</span> <span class="sh-str">"installing packages..."</span>
+<span class="sh-cmd">sudo</span> pacman <span class="sh-flag">-Syu --noconfirm</span> <span class="sh-str">"${PKGS[@]}"</span>
+<span class="sh-cmd">ok</span> <span class="sh-str">"packages installed"</span>
+
+<span class="sh-section"># ── 03 backup existing configs ───────────</span>
+<span class="sh-cmd">log</span> <span class="sh-str">"backing up existing configs to $BACKUP_DIR"</span>
+<span class="sh-fn">mkdir</span> <span class="sh-flag">-p</span> <span class="sh-str">"$BACKUP_DIR"</span>
+<span class="sh-fn">for</span> dir <span class="sh-fn">in</span> hypr waybar kitty rofi dunst; <span class="sh-fn">do</span>
+  [[ <span class="sh-flag">-d</span> <span class="sh-str">"$DOTFILES_DIR/$dir"</span> ]] &amp;&amp; \
+    <span class="sh-cmd">cp</span> <span class="sh-flag">-r</span> <span class="sh-str">"$DOTFILES_DIR/$dir"</span> <span class="sh-str">"$BACKUP_DIR/"</span>
+<span class="sh-fn">done</span>
+<span class="sh-cmd">ok</span> <span class="sh-str">"backup saved"</span>
+
+<span class="sh-section"># ── 04 clone &amp; link dotfiles ─────────────</span>
+<span class="sh-cmd">log</span> <span class="sh-str">"fetching dotfiles..."</span>
+<span class="sh-fn">mkdir</span> <span class="sh-flag">-p</span> <span class="sh-str">"$HOME/.local/src"</span>
+<span class="sh-cmd">git</span> <span class="sh-flag">clone</span> <span class="sh-str">"$REPO"</span> <span class="sh-str">"$HOME/.local/src/hyprware"</span>
+
+<span class="sh-fn">for</span> dir <span class="sh-fn">in</span> hypr waybar kitty rofi dunst; <span class="sh-fn">do</span>
+  <span class="sh-fn">mkdir</span> <span class="sh-flag">-p</span> <span class="sh-str">"$DOTFILES_DIR/$dir"</span>
+  <span class="sh-cmd">cp</span> <span class="sh-flag">-r</span> <span class="sh-str">"$HOME/.local/src/hyprware/$dir/."</span> \
+         <span class="sh-str">"$DOTFILES_DIR/$dir/"</span>
+<span class="sh-fn">done</span>
+<span class="sh-cmd">ok</span> <span class="sh-str">"dotfiles linked"</span>
+
+<span class="sh-section"># ── 05 wallpaper &amp; gtk theme ─────────────</span>
+<span class="sh-cmd">log</span> <span class="sh-str">"applying theme..."</span>
+<span class="sh-fn">mkdir</span> <span class="sh-flag">-p</span> <span class="sh-str">"$HOME/.local/share/themes"</span>
+<span class="sh-cmd">gsettings</span> set org.gnome.desktop.interface \
+  gtk-theme <span class="sh-str">"Catppuccin-Mocha-Standard-Blue-Dark"</span>
+<span class="sh-cmd">gsettings</span> set org.gnome.desktop.interface \
+  color-scheme <span class="sh-str">"prefer-dark"</span>
+<span class="sh-cmd">ok</span> <span class="sh-str">"gtk theme set"</span>
+
+<span class="sh-section"># ── 06 set default shell ─────────────────</span>
+<span class="sh-cmd">log</span> <span class="sh-str">"setting zsh as default shell..."</span>
+<span class="sh-cmd">chsh</span> <span class="sh-flag">-s</span> <span class="sh-str">"$(which zsh)"</span>
+<span class="sh-cmd">ok</span> <span class="sh-str">"shell set to zsh"</span>
+
+<span class="sh-section"># ── done ─────────────────────────────────</span>
+<span class="sh-cmd">echo</span> <span class="sh-str">""</span>
+<span class="sh-cmd">echo</span> <span class="sh-str">-e "\033[1;35m  hyprware installed successfully\033[0m"</span>
+<span class="sh-cmd">echo</span> <span class="sh-str">-e "\033[2m  log out and select hyprland to begin\033[0m"</span>
+<span class="sh-cmd">echo</span> <span class="sh-str">""</span>
+    </div>
+  </div>
+
+  <div class="install-cmd">
+    <code><span>$</span> bash &lt;(curl -sL https://raw.githubusercontent.com/SkywareSW/hyprware/main/install.sh)</code>
+    <button class="copy-btn" onclick="copyCurl()">copy</button>
+  </div>
+</section>
+
+<footer>
+  <div>hyprware — a hyprland rice</div>
+  <div>catppuccin mocha · skywareOS · <a href="#">github</a></div>
+</footer>
+
+<script>
+  // generate random stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.width = s.style.height = (Math.random() * 2 + 0.5) + 'px';
+    s.style.opacity = Math.random() * 0.7 + 0.1;
+    s.style.animationDelay = (Math.random() * 5) + 's';
+    s.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    starsEl.appendChild(s);
+  }
+
+  // swatch click to copy hex
+  document.querySelectorAll('.swatch').forEach(sw => {
+    sw.addEventListener('click', () => {
+      const bg = sw.style.background;
+      navigator.clipboard?.writeText(bg);
+      sw.style.outline = '2px solid #89b4fa';
+      setTimeout(() => sw.style.outline = '', 600);
+    });
+  });
+
+  // copy install script
+  function copyScript() {
+    const raw = `#!/usr/bin/env bash
+# hyprware install script — skywareOS
+
+set -e
+
+DOTFILES_DIR="$HOME/.config"
+BACKUP_DIR="$HOME/.config.bak.$(date +%s)"
+REPO="https://github.com/SkywareSW/hyprware"
+
+log() { echo -e "\\033[1;34m[hyprware]\\033[0m $1"; }
+ok()  { echo -e "\\033[1;32m[  done  ]\\033[0m $1"; }
+err() { echo -e "\\033[1;31m[  err   ]\\033[0m $1" && exit 1; }
+
+log "checking system..."
+[[ "$(uname -s)" == "Linux" ]] || err "linux only"
+ok "running on skywareOS"
+
+PKGS=(
+  hyprland waybar kitty rofi-wayland
+  swww dunst polkit-gnome
+  noto-fonts nerd-fonts-jetbrains-mono
+  catppuccin-gtk-theme-mocha
+  hyprpicker grim slurp wl-clipboard
+  btop neofetch zsh starship
+)
+
+log "installing packages..."
+sudo pacman -Syu --noconfirm "${PKGS[@]}"
+ok "packages installed"
+
+log "backing up existing configs to $BACKUP_DIR"
+mkdir -p "$BACKUP_DIR"
+for dir in hypr waybar kitty rofi dunst; do
+  [[ -d "$DOTFILES_DIR/$dir" ]] && cp -r "$DOTFILES_DIR/$dir" "$BACKUP_DIR/"
+done
+ok "backup saved"
+
+log "fetching dotfiles..."
+mkdir -p "$HOME/.local/src"
+git clone "$REPO" "$HOME/.local/src/hyprware"
+
+for dir in hypr waybar kitty rofi dunst; do
+  mkdir -p "$DOTFILES_DIR/$dir"
+  cp -r "$HOME/.local/src/hyprware/$dir/." "$DOTFILES_DIR/$dir/"
+done
+ok "dotfiles linked"
+
+log "applying theme..."
+gsettings set org.gnome.desktop.interface gtk-theme "Catppuccin-Mocha-Standard-Blue-Dark"
+gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+ok "gtk theme set"
+
+log "setting zsh as default shell..."
+chsh -s "$(which zsh)"
+ok "shell set to zsh"
+
+echo ""
+echo -e "\\033[1;35m  hyprware installed successfully\\033[0m"
+echo -e "\\033[2m  log out and select hyprland to begin\\033[0m"
+echo ""`;
+    navigator.clipboard?.writeText(raw);
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+  }
+
+  function copyCurl() {
+    navigator.clipboard?.writeText('bash <(curl -sL https://raw.githubusercontent.com/SkywareSW/hyprware/main/install.sh)');
+    event.target.textContent = 'copied!';
+    event.target.classList.add('copied');
+    setTimeout(() => { event.target.textContent = 'copy'; event.target.classList.remove('copied'); }, 2000);
+  }
+</script>
+</body>
+</html>
